@@ -13,7 +13,7 @@ beforeAll(() => {
   mongoose.connect(
     process.env.MONGO_URL,
     { useNewUrlParser: true },
-    function() {
+    function () {
       /* Drop the DB */
       mongoose.connection.db.dropDatabase();
     },
@@ -22,10 +22,7 @@ beforeAll(() => {
 
 describe('App', () => {
   it('Should ping', () => {
-    return request(app)
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+    return request(app).get('/').expect(200).expect('Hello World!');
   });
 });
 
@@ -63,7 +60,7 @@ describe('Auth', () => {
   });
   it('Should set 2 user as admin', () => {
     return new Promise((resolve, reject) => {
-      mongoose.connection.db.collection('users', function(err, collection) {
+      mongoose.connection.db.collection('users', function (err, collection) {
         collection.update(
           { username: admin.username },
           { $set: { admin: true } },
@@ -129,9 +126,7 @@ describe('Auth', () => {
 
 describe('Users', () => {
   it('Should not return user', () => {
-    return request(app)
-      .get('/users/profile')
-      .expect(401);
+    return request(app).get('/users/profile').expect(401);
   });
 
   it('Should return user', () => {
@@ -151,9 +146,7 @@ describe('Users', () => {
   });
 
   it('Should not return all users', () => {
-    return request(app)
-      .get('/users')
-      .expect(401);
+    return request(app).get('/users').expect(401);
   });
 
   it('Should not return all users', () => {
@@ -174,9 +167,7 @@ describe('Users', () => {
 describe('Bots', () => {
   describe('create', () => {
     it('Should return unauth', () => {
-      return request(app)
-        .post('/bots')
-        .expect(401);
+      return request(app).post('/bots').expect(401);
     });
 
     it('Should return unauth', () => {
@@ -212,9 +203,7 @@ describe('Bots', () => {
 
   describe('fetch', () => {
     it('Should return unauth', () => {
-      return request(app)
-        .get('/bots')
-        .expect(401);
+      return request(app).get('/bots').expect(401);
     });
 
     it('Should return 0 bots', () => {
@@ -338,20 +327,23 @@ describe('Bots', () => {
   describe('bot stop', () => {
     it('Should return unauth', () => {
       return request(app)
-        .get('/bots/' + bot1Id + '/stop')
+        .post('/bots/stop')
+        .send({ ids: [bot1Id] })
         .expect(401);
     });
 
     it('Should return 404', () => {
       return request(app)
-        .get('/bots/' + bot1Id + '/stop')
+        .post('/bots/stop')
+        .send({ ids: [bot1Id] })
         .set('Authorization', 'bearer ' + user.token)
         .expect(404);
     });
 
     it('Should stop bot', () => {
       return request(app)
-        .get('/bots/' + bot1Id + '/stop')
+        .post('/bots/stop')
+        .send({ ids: [bot1Id] })
         .set('Authorization', 'bearer ' + admin.token)
         .expect(200);
     });
@@ -370,20 +362,23 @@ describe('Bots', () => {
   describe('bot start', () => {
     it('Should return unauth', () => {
       return request(app)
-        .get('/bots/' + bot1Id + '/start')
+        .post('/bots/start')
+        .send({ ids: [bot1Id] })
         .expect(401);
     });
 
     it('Should return 404', () => {
       return request(app)
-        .get('/bots/' + bot1Id + '/start')
+        .post('/bots/start')
+        .send({ ids: [bot1Id] })
         .set('Authorization', 'bearer ' + user.token)
         .expect(404);
     });
 
     it('Should start bot', () => {
       return request(app)
-        .get('/bots/' + bot1Id + '/start')
+        .post('/bots/start')
+        .send({ ids: [bot1Id] })
         .set('Authorization', 'bearer ' + admin.token)
         .expect(200);
     });

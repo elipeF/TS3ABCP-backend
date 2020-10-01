@@ -230,53 +230,51 @@ export class BotsService {
     }
   }
 
-  async startBots(req, params) {
-    let query: IBot[];
-    if (req.admin) {
-      query = await this.botModel.find({ _id: params.id }).exec();
-    } else {
-      query = await this.botModel
-        .find({ owner: req.id, _id: params.id })
-        .exec();
-    }
-
-    if (query.length > 0) {
-      try {
-        await this.httpService
-          .get(process.env.AUDIOBOT_API + 'bot/' + query[0].id + '/start')
-          .toPromise();
-        return true;
-      } catch (e) {
-        const er: AxiosError = e;
-        throw new HttpException(er.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  async startBots(req, body) {
+    for (const id of body.ids) {
+      let query: IBot[];
+      if (req.admin) {
+        query = await this.botModel.find({ _id: id }).exec();
+      } else {
+        query = await this.botModel.find({ owner: req.id, _id: id }).exec();
       }
-    } else {
-      throw new HttpException('Bot not found', HttpStatus.NOT_FOUND);
+
+      if (query.length > 0) {
+        try {
+          await this.httpService
+            .get(process.env.AUDIOBOT_API + 'bot/' + query[0].id + '/start')
+            .toPromise();
+        } catch (e) {
+          const er: AxiosError = e;
+          throw new HttpException(er.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      } else {
+        throw new HttpException('Bot not found', HttpStatus.NOT_FOUND);
+      }
     }
   }
 
-  async stopBots(req, params) {
-    let query: IBot[];
-    if (req.admin) {
-      query = await this.botModel.find({ _id: params.id }).exec();
-    } else {
-      query = await this.botModel
-        .find({ owner: req.id, _id: params.id })
-        .exec();
-    }
-
-    if (query.length > 0) {
-      try {
-        await this.httpService
-          .get(process.env.AUDIOBOT_API + 'bot/' + query[0].id + '/stop')
-          .toPromise();
-        return true;
-      } catch (e) {
-        const er: AxiosError = e;
-        throw new HttpException(er.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  async stopBots(req, body) {
+    for (const id of body.ids) {
+      let query: IBot[];
+      if (req.admin) {
+        query = await this.botModel.find({ _id: id }).exec();
+      } else {
+        query = await this.botModel.find({ owner: req.id, _id: id }).exec();
       }
-    } else {
-      throw new HttpException('Bot not found', HttpStatus.NOT_FOUND);
+
+      if (query.length > 0) {
+        try {
+          await this.httpService
+            .get(process.env.AUDIOBOT_API + 'bot/' + query[0].id + '/stop')
+            .toPromise();
+        } catch (e) {
+          const er: AxiosError = e;
+          throw new HttpException(er.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+      } else {
+        throw new HttpException('Bot not found', HttpStatus.NOT_FOUND);
+      }
     }
   }
 

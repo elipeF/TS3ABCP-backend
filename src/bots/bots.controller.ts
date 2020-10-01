@@ -15,6 +15,7 @@ import { BotSettings } from 'src/bot';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { HasUuid } from 'src/has-uuid';
 import { Rights } from 'src/rights';
+import { uuidArray } from '../uuid-array';
 
 @Controller('bots')
 export class BotsController {
@@ -39,15 +40,15 @@ export class BotsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('/:id/start')
-  botStart(@Request() req, @Param() params: HasUuid) {
-    return this.botsService.startBots(req.user, params);
+  @Post('/start')
+  botStart(@Request() req, @Body() body: uuidArray) {
+    return this.botsService.startBots(req.user, body);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('/:id/stop')
-  botStop(@Request() req, @Param() params: HasUuid) {
-    return this.botsService.stopBots(req.user, params);
+  @Post('/stop')
+  botStop(@Request() req, @Body() body: uuidArray) {
+    return this.botsService.stopBots(req.user, body);
   }
 
   @UseGuards(AuthGuard('jwt'))
